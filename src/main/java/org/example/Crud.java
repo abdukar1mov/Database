@@ -25,46 +25,30 @@ public class Crud<T> {
     }
 
     public List<T> readAllJsonRecords() {
+        List<T> records = new ArrayList<>();
+
         try (Reader reader = new FileReader(jsonFile)) {
-            Type listType = TypeToken.getParameterized(List.class, DataRecord.class).getType();
-            return gson.fromJson(reader, listType);
+            Type listType = new TypeToken<List<T>>() {
+            }.getType();
+            records = gson.fromJson(reader, listType);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return records;
     }
 
+
     public T readJsonRecord(String id, Type recordType) {
-        List<T> records = readAllJsonRecords();
-        if (records != null) {
-            for (T record : records) {
-                if (getID(record,recordType).equals(id)) {
-                    return record;
-                }
-            }
-        }
         return null;
     }
 
     public void updateJsonRecord(String id, T newData, Type recordType) {
-        List<T> records = readAllJsonRecords();
-        if (records != null) {
-            for (T record : records) {
-                if (getID(record, recordType).equals(id)) {
 
-                    break;
-                }
-            }
-            writeJsonRecords(records);
-        }
     }
 
     public void deleteJsonRecord(String id, Type recordType) {
-        List<T> records = readAllJsonRecords();
-        if (records != null) {
-            records.removeIf(record -> Objects.equals(getID(record, recordType), id));
-            writeJsonRecords(records);
-        }
+
     }
 
     public void writeJsonRecords(List<T> records) {
@@ -76,45 +60,11 @@ public class Crud<T> {
     }
 
 
-
     private void updateRecordFields(T record, T newData, Type recordType) {
-        try {
-            // Perform field updates based on your specific requirements
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void createJsonRecord(T data) {
-        try (FileWriter writer = new FileWriter(jsonFile, true)) {
-            gson.toJson(data, writer);
-            writer.append(",");
-            writer.append(System.lineSeparator()); // Add a new line after each record
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private String getID(T record, Type recordType) {
-        try {
-            Class<?> clazz = Class.forName(recordType.getTypeName());
-            Field[] fields = clazz.getDeclaredFields();
-
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Id.class)) {
-                    field.setAccessible(true);
-                    Object value = field.get(record);
-                    return value != null ? value.toString() : null;
-                }
-            }
-
-            // If no field with the @Id annotation is found, return null
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

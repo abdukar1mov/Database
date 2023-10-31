@@ -10,13 +10,14 @@ public class Main {
         DataRecord data = new DataRecord("34", "uih;", "bbb", "", "", "");
         dataRecordCrud.writeJsonRecords(Arrays.asList(data,data,data));
 
+        System.out.println(dataRecordCrud.readAllJsonRecords());
 
 
         Crud<Car> carCrud = new Crud<>("src/main/resources/car.json");
         Car car = new Car("55","iuubu","uihou","76");
-        car.getCategory();
         car.setCategory("jbob");
         carCrud.writeJsonRecords(Arrays.asList(car,car,car,car));
+        System.out.println(carCrud.readAllJsonRecords());
 
 
 
